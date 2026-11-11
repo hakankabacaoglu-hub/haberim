@@ -1,0 +1,150 @@
+{
+  "tabs": [
+    {
+      "id": "tr",
+      "name": "Türkiye",
+      "max_age_hours": 36,
+      "sources": [
+        {
+          "name": "Google Haberler TR",
+          "url": "https://news.google.com/rss?hl=tr&gl=TR&ceid=TR:tr"
+        },
+        {
+          "name": "BBC Türkçe",
+          "url": "https://feeds.bbci.co.uk/turkce/rss.xml"
+        },
+        {
+          "name": "DW Türkçe",
+          "url": "https://rss.dw.com/rdf/rss-tur-all"
+        },
+        {
+          "name": "Euronews Türkçe",
+          "url": "https://tr.euronews.com/rss"
+        },
+        {
+          "name": "T24",
+          "url": "https://t24.com.tr/rss"
+        }
+      ]
+    },
+    {
+      "id": "ie",
+      "name": "Ireland",
+      "max_age_hours": 36,
+      "sources": [
+        {
+          "name": "RTÉ News",
+          "url": "https://www.rte.ie/feeds/rss/?index=/news/"
+        },
+        {
+          "name": "TheJournal.ie",
+          "url": "https://www.thejournal.ie/feed/"
+        },
+        {
+          "name": "Irish Independent",
+          "url": "https://www.independent.ie/irish-news/rss"
+        },
+        {
+          "name": "Irish Times",
+          "url": "https://news.google.com/rss/search?q=site:irishtimes.com+when:2d&hl=en-IE&gl=IE&ceid=IE:en"
+        },
+        {
+          "name": "Google News IE",
+          "url": "https://news.google.com/rss?hl=en-IE&gl=IE&ceid=IE:en"
+        }
+      ]
+    },
+    {
+      "id": "mkt",
+      "name": "Markets",
+      "max_age_hours": 36,
+      "quotes": [
+        {
+          "symbol": "^GSPC",
+          "name": "S&P 500"
+        },
+        {
+          "symbol": "^IXIC",
+          "name": "Nasdaq Comp."
+        },
+        {
+          "symbol": "^NDX",
+          "name": "Nasdaq 100"
+        }
+      ],
+      "sources": [
+        {
+          "name": "CNBC Markets",
+          "url": "https://www.cnbc.com/id/20910258/device/rss/rss.html"
+        },
+        {
+          "name": "MarketWatch",
+          "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories"
+        },
+        {
+          "name": "Reuters Markets",
+          "url": "https://news.google.com/rss/search?q=site:reuters.com+(stocks+OR+%22Wall+Street%22+OR+Nasdaq)+when:1d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "S&P 500 / Nasdaq",
+          "url": "https://news.google.com/rss/search?q=(%22S%26P+500%22+OR+Nasdaq)+when:1d&hl=en-US&gl=US&ceid=US:en"
+        }
+      ]
+    },
+    {
+      "id": "gs",
+      "name": "Galatasaray",
+      "max_age_hours": 48,
+      "keywords": [
+        "galatasaray",
+        "cimbom",
+        "okan buruk",
+        "rams park"
+      ],
+      "sources": [
+        {
+          "name": "Google Haberler",
+          "url": "https://news.google.com/rss/search?q=Galatasaray+when:2d&hl=tr&gl=TR&ceid=TR:tr"
+        },
+        {
+          "name": "Google News EN",
+          "url": "https://news.google.com/rss/search?q=Galatasaray+when:2d&hl=en-GB&gl=GB&ceid=GB:en"
+        }
+      ]
+    },
+    {
+      "id": "auto",
+      "name": "Automotive",
+      "max_age_hours": 48,
+      "sources": [
+        {
+          "name": "Automotive News",
+          "url": "https://news.google.com/rss/search?q=site:autonews.com+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Autocar",
+          "url": "https://www.autocar.co.uk/rss"
+        },
+        {
+          "name": "Motor1",
+          "url": "https://www.motor1.com/rss/news/all/"
+        },
+        {
+          "name": "Just Auto",
+          "url": "https://www.just-auto.com/feed/"
+        },
+        {
+          "name": "Recalls",
+          "url": "https://news.google.com/rss/search?q=(recall+vehicles+OR+%22vehicle+recall%22+OR+NHTSA+recall)+when:2d&hl=en-US&gl=US&ceid=US:en",
+          "tag": "Recall"
+        },
+        {
+          "name": "Otomotiv TR",
+          "url": "https://news.google.com/rss/search?q=otomotiv+sekt%C3%B6r%C3%BC+when:2d&hl=tr&gl=TR&ceid=TR:tr"
+        }
+      ]
+    }
+  ],
+  "max_items_per_tab": 40,
+  "max_items_per_source": 10
+}
