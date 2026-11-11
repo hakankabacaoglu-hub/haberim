@@ -23,7 +23,7 @@
         },
         {
           "name": "T24",
-          "url": "https://t24.com.tr/rss"
+          "url": "https://news.google.com/rss/search?q=site:t24.com.tr+when:1d&hl=tr&gl=TR&ceid=TR:tr"
         }
       ]
     },
@@ -60,15 +60,15 @@
       "max_age_hours": 36,
       "quotes": [
         {
-          "symbol": "^GSPC",
+          "symbol": ".SPX",
           "name": "S&P 500"
         },
         {
-          "symbol": "^IXIC",
+          "symbol": ".IXIC",
           "name": "Nasdaq Comp."
         },
         {
-          "symbol": "^NDX",
+          "symbol": ".NDX",
           "name": "Nasdaq 100"
         }
       ],
@@ -78,16 +78,12 @@
           "url": "https://www.cnbc.com/id/20910258/device/rss/rss.html"
         },
         {
-          "name": "MarketWatch",
-          "url": "https://feeds.content.dowjones.io/public/rss/mw_topstories"
-        },
-        {
           "name": "Reuters Markets",
           "url": "https://news.google.com/rss/search?q=site:reuters.com+(stocks+OR+%22Wall+Street%22+OR+Nasdaq)+when:1d&hl=en-US&gl=US&ceid=US:en"
         },
         {
-          "name": "S&P 500 / Nasdaq",
-          "url": "https://news.google.com/rss/search?q=(%22S%26P+500%22+OR+Nasdaq)+when:1d&hl=en-US&gl=US&ceid=US:en"
+          "name": "Wall Street",
+          "url": "https://news.google.com/rss/search?q=(%22stock+market%22+OR+%22Wall+Street%22+OR+%22S%26P+500%22+OR+Nasdaq)+(site:apnews.com+OR+site:cnbc.com+OR+site:bloomberg.com+OR+site:ft.com+OR+site:wsj.com+OR+site:marketwatch.com)+when:1d&hl=en-US&gl=US&ceid=US:en"
         }
       ]
     },
@@ -131,7 +127,7 @@
         },
         {
           "name": "Just Auto",
-          "url": "https://www.just-auto.com/feed/"
+          "url": "https://news.google.com/rss/search?q=site:just-auto.com+when:3d&hl=en-US&gl=US&ceid=US:en"
         },
         {
           "name": "Recalls",
