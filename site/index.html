@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Haberim">
+<meta name="theme-color" content="#0f1115">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Haberim</title>
+<style>
+  :root {
+    --bg: #0f1115; --card: #181b22; --line: #262a33; --text: #e9ebef; --muted: #8b919c;
+    --accent: #f5a524; --up: #2fbf71; --down: #ef5350; --chip: #20242c;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg: #f4f5f7; --card: #ffffff; --line: #e3e5e9; --text: #15171c; --muted: #6b7280; --chip: #e9ebef; --accent: #c77700; }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--bg);
+    padding: calc(env(safe-area-inset-top) + 10px) 16px 0; border-bottom: 1px solid var(--line); }
+  .top { display: flex; align-items: baseline; justify-content: space-between; }
+  h1 { font-size: 26px; margin: 0; letter-spacing: -0.5px; }
+  .updated { color: var(--muted); font-size: 12px; }
+  .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: 0 0 auto; border: 0; border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 14px;
+    background: var(--chip); color: var(--text); }
+  .tab.on { background: var(--accent); color: #111; font-weight: 600; }
+  main { padding: 12px 16px calc(env(safe-area-inset-bottom) + 24px); max-width: 720px; margin: 0 auto; }
+  .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .q { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+  .q .n { font-size: 12px; color: var(--muted); }
+  .q .p { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .q .c { font-size: 13px; font-variant-numeric: tabular-nums; }
+  .up { color: var(--up); } .down { color: var(--down); }
+  a.item { display: block; text-decoration: none; color: inherit; background: var(--card);
+    border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; }
+  a.item:active { opacity: .6; }
+  .meta { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: flex; gap: 6px; align-items: center; }
+  .src { color: var(--accent); font-weight: 600; }
+  .tag { background: var(--down); color: #fff; border-radius: 4px; padding: 0 5px; font-size: 11px; font-weight: 600; }
+  .t { font-size: 16px; font-weight: 600; }
+  .d { font-size: 14px; color: var(--muted); margin-top: 4px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .empty, .err { color: var(--muted); text-align: center; padding: 40px 0; }
+  details { margin-top: 20px; color: var(--muted); font-size: 13px; }
+  details li.bad { color: var(--down); }
+  button.refresh { border: 0; background: none; color: var(--accent); font: inherit; font-size: 14px; padding: 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <h1>Haberim</h1>
+    <button class="refresh" id="refresh">Yenile</button>
+  </div>
+  <div class="updated" id="updated">Yükleniyor…</div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+<main id="main"></main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let data = null;
+let current = null;
+try { current = localStorage.getItem("tab"); } catch (e) {}
+
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+function ago(ts) {
+  if (!ts) return "";
+  const m = Math.max(0, Math.round((Date.now() / 1000 - ts) / 60));
+  if (m < 1) return "şimdi";
+  if (m < 60) return m + " dk";
+  const h = Math.round(m / 60);
+  if (h < 24) return h + " sa";
+  return Math.round(h / 24) + " g";
+}
+
+const fmt = (n) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function renderTabs() {
+  $("tabs").innerHTML = data.tabs
+    .map((t) => `<button class="tab${t.id === current ? " on" : ""}" data-id="${t.id}">${esc(t.name)}</button>`)
+    .join("");
+}
+
+function renderTab() {
+  const tab = data.tabs.find((t) => t.id === current) || data.tabs[0];
+  current = tab.id;
+  let html = "";
+  if (tab.quotes && tab.quotes.length) {
+    html += `<div class="quotes">` + tab.quotes.map((q) => {
+      const cls = q.chg >= 0 ? "up" : "down";
+      const sign = q.chg >= 0 ? "+" : "";
+      return `<div class="q"><div class="n">${esc(q.name)}</div><div class="p">${fmt(q.price)}</div><div class="c ${cls}">${sign}${q.chg.toFixed(2)}%</div></div>`;
+    }).join("") + `</div>`;
+  }
+  if (!tab.items.length) html += `<div class="empty">Bu sekmede yeni haber yok.</div>`;
+  html += tab.items.map((it) => `
+    <a class="item" href="${esc(it.u)}" target="_blank" rel="noopener">
+      <div class="meta"><span class="src">${esc(it.s)}</span><span>${ago(it.ts)}</span>${it.tag ? `<span class="tag">${esc(it.tag)}</span>` : ""}</div>
+      <div class="t">${esc(it.t)}</div>
+      ${it.d ? `<div class="d">${esc(it.d)}</div>` : ""}
+    </a>`).join("");
+
+  const st = data.status.filter((s) => s.tab === tab.name);
+  const bad = st.filter((s) => !s.ok).length;
+  if (st.length) html += `<details><summary>Kaynak durumu (${st.length - bad}/${st.length} çalışıyor)</summary><ul>` +
+    st.map((s) => `<li class="${s.ok ? "" : "bad"}">${esc(s.src)}: ${s.ok ? s.n + " haber" : "hata"}</li>`).join("") +
+    `</ul></details>`;
+  $("main").innerHTML = html;
+  renderTabs();
+  try { localStorage.setItem("tab", current); } catch (e) {}
+}
+
+async function load() {
+  $("updated").textContent = "Yükleniyor…";
+  try {
+    const res = await fetch("news.json?ts=" + Date.now(), { cache: "no-store" });
+    data = await res.json();
+    const d = new Date(data.generated * 1000);
+    $("updated").textContent = "Güncellendi: " + d.toLocaleString("tr-TR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + " (" + ago(data.generated) + " önce)";
+    renderTab();
+  } catch (e) {
+    $("updated").textContent = "Bağlantı yok";
+    if (!data) $("main").innerHTML = `<div class="err">Haberler yüklenemedi. İnternet bağlantını kontrol et.</div>`;
+  }
+}
+
+$("tabs").addEventListener("click", (e) => {
+  const b = e.target.closest(".tab");
+  if (!b) return;
+  current = b.dataset.id;
+  renderTab();
+  window.scrollTo({ top: 0 });
+});
+$("refresh").addEventListener("click", load);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+load();
+</script>
+</body>
+</html>
