@@ -82,21 +82,24 @@ def parse_source(src, now, max_age, keywords):
     return items
 
 
-def fetch_quote(q):
-    url = ("https://query1.finance.yahoo.com/v8/finance/chart/"
-           + urllib.parse.quote(q["symbol"]) + "?range=1d&interval=1d")
+def fetch_quotes(quotes):
+    """Index levels from CNBC's public quote service (no API key)."""
+    syms = "|".join(q["symbol"] for q in quotes)
+    url = ("https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols="
+           + urllib.parse.quote(syms) + "&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json&events=1")
     data = json.loads(http_get(url))
-    meta = data["chart"]["result"][0]["meta"]
-    price = meta.get("regularMarketPrice")
-    prev = meta.get("previousClose") or meta.get("chartPreviousClose")
-    if price is None or not prev:
-        raise ValueError("no price")
-    return {
-        "name": q["name"],
-        "price": round(price, 2),
-        "chg": round((price - prev) / prev * 100, 2),
-        "ts": meta.get("regularMarketTime"),
-    }
+    rows = data["FormattedQuoteResult"]["FormattedQuote"]
+    if isinstance(rows, dict):
+        rows = [rows]
+    by_sym = {r.get("symbol"): r for r in rows}
+    num = lambda v: float(str(v).replace(",", "").replace("%", "").replace("+", ""))
+    out = []
+    for q in quotes:
+        r = by_sym.get(q["symbol"])
+        if not r:
+            continue
+        out.append({"name": q["name"], "price": round(num(r["last"]), 2), "chg": round(num(r["change_pct"]), 2)})
+    return out
 
 
 def main():
@@ -124,12 +127,13 @@ def main():
             unique.append(it)
         tab_out = {"id": tab["id"], "name": tab["name"], "items": unique[: cfg["max_items_per_tab"]]}
         if tab.get("quotes"):
-            tab_out["quotes"] = []
-            for q in tab["quotes"]:
-                try:
-                    tab_out["quotes"].append(fetch_quote(q))
-                except Exception as ex:
-                    print(f"[WARN] quote {q['symbol']}: {ex}", file=sys.stderr)
+            try:
+                tab_out["quotes"] = fetch_quotes(tab["quotes"])
+                out["status"].append({"tab": tab["name"], "src": "Endeks fiyatları", "ok": True, "n": len(tab_out["quotes"])})
+            except Exception as ex:
+                tab_out["quotes"] = []
+                out["status"].append({"tab": tab["name"], "src": "Endeks fiyatları", "ok": False, "err": str(ex)[:120]})
+                print(f"[WARN] quotes: {ex}", file=sys.stderr)
         out["tabs"].append(tab_out)
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     ok = sum(1 for s in out["status"] if s["ok"])
