@@ -45,11 +45,14 @@ def entry_time(e):
 
 
 BLOCKLIST = []
+ALLOW = []  # filled per tab when the tab has "trusted_only": true
 
 
 def blocked(publisher, href, link):
     hay = " ".join((publisher or "", href or "", link if "news.google.com" not in (link or "") else "")).lower()
-    return any(b in hay for b in BLOCKLIST)
+    if any(b in hay for b in BLOCKLIST):
+        return True
+    return bool(ALLOW) and not any(a in hay for a in ALLOW)
 
 
 def parse_source(src, now, max_age, keywords):
@@ -123,6 +126,7 @@ def main():
     out = {"generated": now, "tabs": [], "status": []}
     for tab in cfg["tabs"]:
         keywords = [k.lower() for k in tab.get("keywords", [])]
+        ALLOW[:] = [a.lower() for a in cfg.get("trusted", [])] if tab.get("trusted_only") else []
         collected = []
         for src in tab["sources"]:
             try:
