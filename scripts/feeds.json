@@ -55,6 +55,104 @@
       ]
     },
     {
+      "id": "port",
+      "name": "Markets",
+      "sub": "My Portfolio",
+      "max_age_hours": 48,
+      "per_source": 5,
+      "sources": [
+        {
+          "name": "TSMC",
+          "label": "TSMC",
+          "url": "https://news.google.com/rss/search?q=(TSMC+OR+%22Taiwan+Semiconductor%22)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "ASML",
+          "label": "ASML",
+          "url": "https://news.google.com/rss/search?q=ASML+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Alphabet",
+          "label": "Alphabet",
+          "url": "https://news.google.com/rss/search?q=(Alphabet+OR+GOOGL+OR+%22Google+stock%22+OR+%22Google+shares%22)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "SanDisk",
+          "label": "SanDisk",
+          "url": "https://news.google.com/rss/search?q=Sandisk+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "SpaceX",
+          "label": "SpaceX",
+          "url": "https://news.google.com/rss/search?q=SpaceX+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Edenor",
+          "label": "Edenor",
+          "url": "https://news.google.com/rss/search?q=Edenor+when:2d&hl=en-US&gl=US&ceid=US:en"
+        }
+      ]
+    },
+    {
+      "id": "watch",
+      "name": "Markets",
+      "sub": "Watchlist",
+      "max_age_hours": 48,
+      "per_source": 4,
+      "sources": [
+        {
+          "name": "NVIDIA",
+          "label": "NVIDIA",
+          "url": "https://news.google.com/rss/search?q=Nvidia+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "AMD",
+          "label": "AMD",
+          "url": "https://news.google.com/rss/search?q=(AMD+OR+%22Advanced+Micro+Devices%22)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Micron",
+          "label": "Micron",
+          "url": "https://news.google.com/rss/search?q=%22Micron+Technology%22+OR+Micron+stock+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Intel",
+          "label": "Intel",
+          "url": "https://news.google.com/rss/search?q=Intel+(stock+OR+shares+OR+chip+OR+foundry)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Apple",
+          "label": "Apple",
+          "url": "https://news.google.com/rss/search?q=Apple+(AAPL+OR+stock+OR+shares+OR+earnings)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Microsoft",
+          "label": "Microsoft",
+          "url": "https://news.google.com/rss/search?q=Microsoft+(MSFT+OR+stock+OR+shares+OR+earnings)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Amazon",
+          "label": "Amazon",
+          "url": "https://news.google.com/rss/search?q=Amazon+(AMZN+OR+stock+OR+shares+OR+earnings)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Toyota",
+          "label": "Toyota",
+          "url": "https://news.google.com/rss/search?q=Toyota+(stock+OR+shares+OR+earnings+OR+sales)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Energy",
+          "label": "Energy",
+          "url": "https://news.google.com/rss/search?q=(%22energy+stocks%22+OR+%22energy+sector%22+OR+%22oil+stocks%22)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Genomics/Biotech",
+          "label": "Genomics/Biotech",
+          "url": "https://news.google.com/rss/search?q=(%22genomics+stocks%22+OR+%22biotech+stocks%22+OR+%22biotech+sector%22)+when:2d&hl=en-US&gl=US&ceid=US:en"
+        }
+      ]
+    },
+    {
       "id": "mkt",
       "name": "Markets",
       "max_age_hours": 36,
@@ -70,6 +168,10 @@
         {
           "symbol": ".NDX",
           "name": "Nasdaq 100"
+        },
+        {
+          "symbol": "XAU=",
+          "name": "Gold (oz)"
         }
       ],
       "sources": [
@@ -84,8 +186,21 @@
         {
           "name": "Wall Street",
           "url": "https://news.google.com/rss/search?q=(%22stock+market%22+OR+%22Wall+Street%22+OR+%22S%26P+500%22+OR+Nasdaq)+(site:apnews.com+OR+site:cnbc.com+OR+site:bloomberg.com+OR+site:ft.com+OR+site:wsj.com+OR+site:marketwatch.com)+when:1d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Fed & ECB",
+          "url": "https://news.google.com/rss/search?q=(%22Federal+Reserve%22+OR+%22Fed+rate%22+OR+ECB+rate)+when:1d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "Altın",
+          "url": "https://news.google.com/rss/search?q=(%22gold+price%22+OR+%22gold+prices%22)+when:1d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "TCMB & Euro/TL",
+          "url": "https://news.google.com/rss/search?q=(TCMB+faiz+OR+%22Merkez+Bankas%C4%B1%22+faiz+OR+%22euro%2FTL%22+OR+%22Euro+TL%22)+when:2d&hl=tr&gl=TR&ceid=TR:tr"
         }
-      ]
+      ],
+      "sub": "General"
     },
     {
       "id": "med",
