@@ -78,6 +78,8 @@ def parse_source(src, now, max_age, keywords):
             item["d"] = summary
         if src.get("tag"):
             item["tag"] = src["tag"]
+        if src.get("label"):
+            item["lab"] = src["label"]
         items.append(item)
     return items
 
@@ -113,10 +115,10 @@ def main():
             try:
                 items = parse_source(src, now, tab.get("max_age_hours", 36), keywords)
                 items.sort(key=lambda x: x["ts"] or 0, reverse=True)
-                collected.extend(items[: cfg["max_items_per_source"]])
-                out["status"].append({"tab": tab["name"], "src": src["name"], "ok": True, "n": len(items)})
+                collected.extend(items[: tab.get("per_source", cfg["max_items_per_source"])])
+                out["status"].append({"id": tab["id"], "tab": tab["name"], "src": src["name"], "ok": True, "n": len(items)})
             except Exception as ex:  # keep going if one feed is down
-                out["status"].append({"tab": tab["name"], "src": src["name"], "ok": False, "err": str(ex)[:120]})
+                out["status"].append({"id": tab["id"], "tab": tab["name"], "src": src["name"], "ok": False, "err": str(ex)[:120]})
                 print(f"[WARN] {tab['name']} / {src['name']}: {ex}", file=sys.stderr)
         seen, unique = set(), []
         for it in sorted(collected, key=lambda x: x["ts"] or 0, reverse=True):
@@ -125,14 +127,14 @@ def main():
                 continue
             seen.add(key)
             unique.append(it)
-        tab_out = {"id": tab["id"], "name": tab["name"], "items": unique[: cfg["max_items_per_tab"]]}
+        tab_out = {"id": tab["id"], "name": tab["name"], "sub": tab.get("sub"), "items": unique[: cfg["max_items_per_tab"]]}
         if tab.get("quotes"):
             try:
                 tab_out["quotes"] = fetch_quotes(tab["quotes"])
-                out["status"].append({"tab": tab["name"], "src": "Endeks fiyatları", "ok": True, "n": len(tab_out["quotes"])})
+                out["status"].append({"id": tab["id"], "tab": tab["name"], "src": "Endeks fiyatları", "ok": True, "n": len(tab_out["quotes"])})
             except Exception as ex:
                 tab_out["quotes"] = []
-                out["status"].append({"tab": tab["name"], "src": "Endeks fiyatları", "ok": False, "err": str(ex)[:120]})
+                out["status"].append({"id": tab["id"], "tab": tab["name"], "src": "Endeks fiyatları", "ok": False, "err": str(ex)[:120]})
                 print(f"[WARN] quotes: {ex}", file=sys.stderr)
         out["tabs"].append(tab_out)
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
