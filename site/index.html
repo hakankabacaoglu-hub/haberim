@@ -51,6 +51,9 @@
   .empty, .err { color: var(--muted); text-align: center; padding: 40px 0; }
   details { margin-top: 20px; color: var(--muted); font-size: 13px; }
   details li.bad { color: var(--down); }
+  .right { display: flex; align-items: baseline; gap: 12px; }
+  .fx { font-size: 14px; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .fx b { color: var(--text); font-weight: 600; }
   button.refresh { border: 0; background: none; color: var(--accent); font: inherit; font-size: 14px; padding: 0; }
 </style>
 </head>
@@ -58,7 +61,7 @@
 <header>
   <div class="top">
     <h1>Haberim</h1>
-    <button class="refresh" id="refresh">Yenile</button>
+    <div class="right"><span class="fx" id="fx"></span><button class="refresh" id="refresh">Yenile</button></div>
   </div>
   <div class="updated" id="updated">Yükleniyor…</div>
   <nav class="tabs" id="tabs"></nav>
@@ -128,11 +131,41 @@ async function load() {
     const d = new Date(data.generated * 1000);
     $("updated").textContent = "Güncellendi: " + d.toLocaleString("tr-TR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + " (" + ago(data.generated) + " önce)";
     renderTab();
+    live();
   } catch (e) {
     $("updated").textContent = "Bağlantı yok";
     if (!data) $("main").innerHTML = `<div class="err">Haberler yüklenemedi. İnternet bağlantını kontrol et.</div>`;
   }
 }
+
+// Live prices straight from the phone (CNBC quote service), refreshed every minute.
+const LIVE_URL = "https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols=" +
+  encodeURIComponent("EURTRY=|.SPX|.IXIC|.NDX") + "&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json&events=1";
+const INDEX_NAMES = { ".SPX": "S&P 500", ".IXIC": "Nasdaq Comp.", ".NDX": "Nasdaq 100" };
+const num = (v) => parseFloat(String(v).replace(/[,%+]/g, ""));
+async function live() {
+  try {
+    const j = await (await fetch(LIVE_URL, { cache: "no-store" })).json();
+    let rows = j.FormattedQuoteResult.FormattedQuote;
+    if (!Array.isArray(rows)) rows = [rows];
+    const fx = rows.find((r) => r.symbol === "EURTRY=");
+    if (fx) {
+      const c = num(fx.change_pct);
+      $("fx").innerHTML = `EUR/TRY <b>${num(fx.last).toFixed(2)}</b> <span class="${c >= 0 ? "up" : "down"}">${c >= 0 ? "+" : ""}${c.toFixed(2)}%</span>`;
+    }
+    if (data) {
+      const mkt = data.tabs.find((t) => t.id === "mkt");
+      const q = rows.filter((r) => INDEX_NAMES[r.symbol]).map((r) => ({ name: INDEX_NAMES[r.symbol], price: num(r.last), chg: num(r.change_pct) }));
+      if (mkt && q.length) { mkt.quotes = q; if (current === "mkt") renderTab(); }
+    }
+  } catch (e) {
+    try {
+      const j = await (await fetch("https://api.coinbase.com/v2/exchange-rates?currency=EUR")).json();
+      $("fx").innerHTML = `EUR/TRY <b>${parseFloat(j.data.rates.TRY).toFixed(2)}</b>`;
+    } catch (e2) {}
+  }
+}
+setInterval(() => { if (!document.hidden) live(); }, 60000);
 
 $("tabs").addEventListener("click", (e) => {
   const b = e.target.closest(".tab");
