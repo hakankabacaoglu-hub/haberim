@@ -88,23 +88,34 @@
       ]
     },
     {
-      "id": "gs",
-      "name": "Galatasaray",
-      "max_age_hours": 48,
-      "keywords": [
-        "galatasaray",
-        "cimbom",
-        "okan buruk",
-        "rams park"
-      ],
+      "id": "med",
+      "name": "MedTech",
+      "max_age_hours": 72,
       "sources": [
         {
-          "name": "Google Haberler",
-          "url": "https://news.google.com/rss/search?q=Galatasaray+when:2d&hl=tr&gl=TR&ceid=TR:tr"
+          "name": "MedTech Dive",
+          "url": "https://www.medtechdive.com/feeds/news/"
         },
         {
-          "name": "Google News EN",
-          "url": "https://news.google.com/rss/search?q=Galatasaray+when:2d&hl=en-GB&gl=GB&ceid=GB:en"
+          "name": "MassDevice",
+          "url": "https://www.massdevice.com/feed/"
+        },
+        {
+          "name": "Medical Device Network",
+          "url": "https://www.medicaldevice-network.com/feed/"
+        },
+        {
+          "name": "Fierce MedTech",
+          "url": "https://news.google.com/rss/search?q=site:fiercebiotech.com/medtech+when:3d&hl=en-US&gl=US&ceid=US:en"
+        },
+        {
+          "name": "MedTech Ireland",
+          "url": "https://news.google.com/rss/search?q=(medtech+OR+%22medical+device%22+OR+%22medical+technology%22)+Ireland+when:3d&hl=en-IE&gl=IE&ceid=IE:en"
+        },
+        {
+          "name": "FDA Recalls",
+          "url": "https://www.fda.gov/about-fda/contact-fda/stay-informed/rss-feeds/medical-device-recalls/rss.xml",
+          "tag": "Recall"
         }
       ]
     },
