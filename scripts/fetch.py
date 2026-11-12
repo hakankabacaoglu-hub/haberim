@@ -44,6 +44,14 @@ def entry_time(e):
     return None
 
 
+BLOCKLIST = []
+
+
+def blocked(publisher, href, link):
+    hay = " ".join((publisher or "", href or "", link if "news.google.com" not in (link or "") else "")).lower()
+    return any(b in hay for b in BLOCKLIST)
+
+
 def parse_source(src, now, max_age, keywords):
     raw = http_get(src["url"])
     feed = feedparser.parse(raw)
@@ -57,14 +65,18 @@ def parse_source(src, now, max_age, keywords):
         if not title or not link:
             continue
         publisher = src["name"]
+        href = ""
         if is_gnews:
             # Google News titles look like "Headline - Publisher"
             s = e.get("source") or {}
             pub = s.get("title") if isinstance(s, dict) else None
+            href = (s.get("href") or "") if isinstance(s, dict) else ""
             if pub:
                 publisher = pub
                 if title.endswith(" - " + pub):
                     title = title[: -len(pub) - 3].strip()
+        if blocked(publisher, href, link):
+            continue
         ts = entry_time(e)
         if ts and now - ts > max_age * 3600:
             continue
@@ -106,6 +118,7 @@ def fetch_quotes(quotes):
 
 def main():
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
+    BLOCKLIST[:] = [b.lower() for b in cfg.get("blocklist", [])]
     now = int(time.time())
     out = {"generated": now, "tabs": [], "status": []}
     for tab in cfg["tabs"]:
