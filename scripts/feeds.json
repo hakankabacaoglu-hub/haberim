@@ -202,7 +202,8 @@
           "url": "https://news.google.com/rss/search?q=(TCMB+faiz+OR+%22Merkez+Bankas%C4%B1%22+faiz+OR+%22euro%2FTL%22+OR+%22Euro+TL%22)+when:2d&hl=tr&gl=TR&ceid=TR:tr"
         }
       ],
-      "sub": "General"
+      "sub": "General",
+      "trusted_only": true
     },
     {
       "id": "med",
@@ -412,7 +413,6 @@
     "nbc news",
     "fox business",
     "sky news",
-    "independent",
     "telegraph",
     "le monde",
     "handelsblatt",
@@ -423,6 +423,37 @@
     "the next platform",
     "computerworld",
     "network world",
-    "venturebeat"
+    "venturebeat",
+    "the independent",
+    "independent.ie",
+    "independent.co.uk",
+    "bloomberght",
+    "bloomberg ht",
+    "dünya",
+    "dunya.com",
+    "ekonomim",
+    "t24",
+    "bbc türkçe",
+    "dw türkçe",
+    "hürriyet",
+    "hurriyet",
+    "habertürk",
+    "haberturk",
+    "ntv",
+    "cumhuriyet",
+    "sözcü",
+    "sozcu",
+    "milliyet",
+    "sabah",
+    "anadolu ajansı",
+    "aa.com.tr",
+    "para analiz",
+    "bigpara",
+    "ekotürk",
+    "ekoturk",
+    "ekonomist",
+    "fortune turkey",
+    "mynet finans",
+    "investing.com türkiye"
   ]
 }
