@@ -32,8 +32,12 @@
   .tab { flex: 0 0 auto; border: 0; border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 14px;
     background: var(--chip); color: var(--text); }
   .tab.on { background: var(--accent); color: #111; font-weight: 600; }
+  .subtabs { padding-top: 0; }
+  .subtabs .tab { background: transparent; border: 1px solid var(--line); font-size: 13px; padding: 6px 12px; }
+  .subtabs .tab.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .lab { border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; font-size: 11px; color: var(--text); font-weight: 600; }
   main { padding: 12px 16px calc(env(safe-area-inset-bottom) + 24px); max-width: 720px; margin: 0 auto; }
-  .quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .quotes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
   .q { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
   .q .n { font-size: 12px; color: var(--muted); }
   .q .p { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -65,6 +69,7 @@
   </div>
   <div class="updated" id="updated">Yükleniyor…</div>
   <nav class="tabs" id="tabs"></nav>
+  <nav class="tabs subtabs" id="subtabs" style="display:none"></nav>
 </header>
 <main id="main"></main>
 
@@ -89,9 +94,16 @@ function ago(ts) {
 const fmt = (n) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function renderTabs() {
-  $("tabs").innerHTML = data.tabs
-    .map((t) => `<button class="tab${t.id === current ? " on" : ""}" data-id="${t.id}">${esc(t.name)}</button>`)
+  const cur = data.tabs.find((t) => t.id === current) || data.tabs[0];
+  const groups = [...new Set(data.tabs.map((t) => t.name))];
+  $("tabs").innerHTML = groups
+    .map((g) => `<button class="tab${g === cur.name ? " on" : ""}" data-group="${esc(g)}">${esc(g)}</button>`)
     .join("");
+  const subs = data.tabs.filter((t) => t.name === cur.name && t.sub);
+  $("subtabs").style.display = subs.length > 1 ? "" : "none";
+  $("subtabs").innerHTML = subs.length > 1
+    ? subs.map((t) => `<button class="tab${t.id === cur.id ? " on" : ""}" data-id="${t.id}">${esc(t.sub)}</button>`).join("")
+    : "";
 }
 
 function renderTab() {
@@ -108,12 +120,12 @@ function renderTab() {
   if (!tab.items.length) html += `<div class="empty">Bu sekmede yeni haber yok.</div>`;
   html += tab.items.map((it) => `
     <a class="item" href="${esc(it.u)}" target="_blank" rel="noopener">
-      <div class="meta"><span class="src">${esc(it.s)}</span><span>${ago(it.ts)}</span>${it.tag ? `<span class="tag">${esc(it.tag)}</span>` : ""}</div>
+      <div class="meta">${it.lab ? `<span class="lab">${esc(it.lab)}</span>` : ""}<span class="src">${esc(it.s)}</span><span>${ago(it.ts)}</span>${it.tag ? `<span class="tag">${esc(it.tag)}</span>` : ""}</div>
       <div class="t">${esc(it.t)}</div>
       ${it.d ? `<div class="d">${esc(it.d)}</div>` : ""}
     </a>`).join("");
 
-  const st = data.status.filter((s) => s.tab === tab.name);
+  const st = data.status.filter((s) => (s.id ? s.id === tab.id : s.tab === tab.name));
   const bad = st.filter((s) => !s.ok).length;
   if (st.length) html += `<details><summary>Kaynak durumu (${st.length - bad}/${st.length} çalışıyor)</summary><ul>` +
     st.map((s) => `<li class="${s.ok ? "" : "bad"}">${esc(s.src)}: ${s.ok ? s.n + " haber" : "hata"}</li>`).join("") +
@@ -140,8 +152,8 @@ async function load() {
 
 // Live prices straight from the phone (CNBC quote service), refreshed every minute.
 const LIVE_URL = "https://quote.cnbc.com/quote-html-webservice/restQuote/symbolType/symbol?symbols=" +
-  encodeURIComponent("EURTRY=|.SPX|.IXIC|.NDX") + "&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json&events=1";
-const INDEX_NAMES = { ".SPX": "S&P 500", ".IXIC": "Nasdaq Comp.", ".NDX": "Nasdaq 100" };
+  encodeURIComponent("EURTRY=|.SPX|.IXIC|.NDX|XAU=") + "&requestMethod=itv&noform=1&partnerId=2&fund=1&exthrs=1&output=json&events=1";
+const INDEX_NAMES = { ".SPX": "S&P 500", ".IXIC": "Nasdaq Comp.", ".NDX": "Nasdaq 100", "XAU=": "Gold (oz)" };
 const num = (v) => parseFloat(String(v).replace(/[,%+]/g, ""));
 async function live() {
   try {
@@ -167,13 +179,24 @@ async function live() {
 }
 setInterval(() => { if (!document.hidden) live(); }, 60000);
 
-$("tabs").addEventListener("click", (e) => {
+function onTab(e) {
   const b = e.target.closest(".tab");
   if (!b) return;
-  current = b.dataset.id;
+  if (b.dataset.id) current = b.dataset.id;
+  else {
+    const g = b.dataset.group;
+    let last = null;
+    try { last = localStorage.getItem("sub:" + g); } catch (err) {}
+    const t = data.tabs.find((x) => x.id === last && x.name === g) || data.tabs.find((x) => x.name === g);
+    current = t.id;
+  }
+  const t = data.tabs.find((x) => x.id === current);
+  try { localStorage.setItem("sub:" + t.name, t.id); } catch (err) {}
   renderTab();
   window.scrollTo({ top: 0 });
-});
+}
+$("tabs").addEventListener("click", onTab);
+$("subtabs").addEventListener("click", onTab);
 $("refresh").addEventListener("click", load);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
 
