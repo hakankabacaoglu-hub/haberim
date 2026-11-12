@@ -98,11 +98,11 @@
         },
         {
           "name": "MassDevice",
-          "url": "https://www.massdevice.com/feed/"
+          "url": "https://news.google.com/rss/search?q=site:massdevice.com+when:3d&hl=en-US&gl=US&ceid=US:en"
         },
         {
           "name": "Medical Device Network",
-          "url": "https://www.medicaldevice-network.com/feed/"
+          "url": "https://news.google.com/rss/search?q=site:medicaldevice-network.com+when:3d&hl=en-US&gl=US&ceid=US:en"
         },
         {
           "name": "Fierce MedTech",
@@ -110,11 +110,11 @@
         },
         {
           "name": "MedTech Ireland",
-          "url": "https://news.google.com/rss/search?q=(medtech+OR+%22medical+device%22+OR+%22medical+technology%22)+Ireland+when:3d&hl=en-IE&gl=IE&ceid=IE:en"
+          "url": "https://news.google.com/rss/search?q=(medtech+OR+%22medical+device%22+OR+%22medical+devices%22)+(Ireland+OR+Irish)+when:3d&hl=en-IE&gl=IE&ceid=IE:en"
         },
         {
           "name": "FDA Recalls",
-          "url": "https://www.fda.gov/about-fda/contact-fda/stay-informed/rss-feeds/medical-device-recalls/rss.xml",
+          "url": "https://news.google.com/rss/search?q=FDA+(%22device+recall%22+OR+%22Class+I+recall%22+OR+%22medical+device+recall%22)+when:3d&hl=en-US&gl=US&ceid=US:en",
           "tag": "Recall"
         }
       ]
